@@ -23,7 +23,7 @@ subprojects {
     }
 
     dependencies {
-        implementation("com.martmists:kotpack:1.0.2")
+        implementation("com.martmists:kotpack:1.0.3")
         testImplementation(kotlin("test"))
     }
 }

@@ -2,9 +2,9 @@ integer     := r"\d+"
 float       := r"\d+\.\d+"
 number      := float
              | integer
-atom        := '-' number
+atom        := '(' expression ')'
              | number
-factor      := '(' expression ')'
+factor      := '-' atom
              | atom
 term        := term '*' factor
              | term '/' factor

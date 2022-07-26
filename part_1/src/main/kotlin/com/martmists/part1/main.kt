@@ -4,7 +4,7 @@ import com.martmists.kotpack.NoMatchException
 
 fun main() {
     val interpreter = CalculatorInterpreter()
-    println("Enter a mathematical expression or press Enter to quit:")
+    println("Enter a mathematical expression or press Enter/^D to quit:")
     while (true) {
         print(">>> ")
         val input = readLine() ?: break

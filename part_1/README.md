@@ -14,16 +14,16 @@ integer := r"\d+"
 float   := r"\d+\.\d+"
 number  := float 
          | integer
-atom    := '-' number
-         | number
 ```
 
-We now have a grammar for both integers and decimals, as well as being able to handle negative numbers.
+We now have a grammar for both integers and decimal.
 Now, we simply add the other parts of our calculator, in order of how we want them to be handled.
 This means we add parentheses first, then multiplication and division, then addition and subtraction.
 
 ```
-factor      := '(' expression ')'  # expression is not yet defined; we'll get there later
+atom        := '(' expression ')'  # expression is not yet defined; we'll get there later
+             | number
+factor      := '-' atom
              | atom
 term        := term '*' factor     # In the code for this a regex will be used; for the grammar this provides more clarity
              | term '/' factor
@@ -144,26 +144,27 @@ val number by first(
     ::float,
     ::integer,
 ).memo()
-
-val atom by first(
-    firstBlock {
-        char('-')  // If there is no -, this will error and it'll try the next item in first() instead.
-        when (val x = number()) {
-            is IntLiteral -> IntLiteral(-x.value)
-            is FloatLiteral -> FloatLiteral(-x.value)
-        }
-    },
-    ::number,
-).memo()
 ```
 Then we can add the rest of the grammar:
 ```kotlin
-val factor: () -> AST by first(
+val atom by first(
     firstBlock {
         char('(')
         val x = expression()
         char(')')
         x
+    },
+    ::number,
+).memo()
+
+private val factor: () -> AST by first(
+    firstBlock {
+        char('-')
+        when (val x = atom()) {
+            is IntLiteral -> IntLiteral(-x.value)
+            is FloatLiteral -> FloatLiteral(-x.value)
+            else -> BinOp(IntLiteral(0), BinOp.Operator.MINUS, x)
+        }
     },
     ::atom,
 ).memo()
@@ -199,8 +200,11 @@ val expression: () -> AST by first(
 ```
 And finally, kotpack requires us to specify the root:
 ```kotlin
-override val root: () -> AST
-    get() = expression
+override val root by sequence {
+    val exp = expression()
+    eoi()
+    exp
+}
 ```
 
 One downside of our grammar is that whitespace breaks everything, but our language doesn't need them anywhere, as there's no type for strings.

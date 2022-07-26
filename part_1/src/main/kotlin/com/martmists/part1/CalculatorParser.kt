@@ -30,20 +30,21 @@ class CalculatorParser(input: String) : GrammarParser<AST>(input.replace(Regex("
 //            }
 //        },
         firstBlock {
-            char('-')
-            when (val x = number()) {
-                is IntLiteral -> IntLiteral(-x.value)
-                is FloatLiteral -> FloatLiteral(-x.value)
-            }
+            char('(')
+            val x = expression()
+            char(')')
+            x
         },
         ::number,
     ).memo()
     private val factor: () -> AST by first(
         firstBlock {
-            char('(')
-            val x = expression()
-            char(')')
-            x
+            char('-')
+            when (val x = atom()) {
+                is IntLiteral -> IntLiteral(-x.value)
+                is FloatLiteral -> FloatLiteral(-x.value)
+                else -> BinOp(IntLiteral(0), BinOp.Operator.MINUS, x)
+            }
         },
         ::atom,
     ).memo()
@@ -74,6 +75,9 @@ class CalculatorParser(input: String) : GrammarParser<AST>(input.replace(Regex("
         ::term,
     ).memoLeft()
 
-    override val root: () -> AST
-        get() = expression
+    override val root by sequence {
+        val exp = expression()
+        eoi()
+        exp
+    }
 }

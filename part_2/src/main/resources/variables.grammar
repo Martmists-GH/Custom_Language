@@ -1,0 +1,29 @@
+integer      := r"\d+"
+float        := r"\d+\.\d+"
+variable     := r"[a-zA-Z_][a-zA-Z\d_]*"
+number       := float
+              | integer
+atom         := variable
+              | number
+              | '(' expression ')'
+primary      := primary '(' arguments? ')'
+              | atom
+factor       := '-' primary
+              | primary
+term         := term '*' factor
+              | term '/' factor
+              | factor
+expression   := expression '+' term
+              | expression '-' term
+              | term
+arguments    := expression (',' expression)*
+parameters   := variable (',' variable)*
+assignment   := variable '=' expression
+functiondef  := 'function' whitespace variable '(' parameters? ')' '{' funcStmts '}'
+statement    := assignment
+              | functiondef
+              | expression
+functionStmt := 'return' expression
+              | statement
+statements   := (statement ';')*
+funcStmts    := (functionStmt ';')*
