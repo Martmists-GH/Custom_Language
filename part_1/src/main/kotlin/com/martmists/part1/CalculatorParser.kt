@@ -14,6 +14,21 @@ class CalculatorParser(input: String) : GrammarParser<AST>(input.replace(Regex("
         ::integer,
     ).memo()
     private val atom by first(
+        // The following is recommended, but not used here as the other option reflects the grammar better.
+//        firstBlock {
+//            val c = optional {
+//                char('-')
+//            }
+//            val n = number()
+//            if (c == null) {
+//                n
+//            } else {
+//                when (n) {
+//                    is IntLiteral -> IntLiteral(-n.value)
+//                    is FloatLiteral -> FloatLiteral(-n.value)
+//                }
+//            }
+//        },
         firstBlock {
             char('-')
             when (val x = number()) {

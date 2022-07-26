@@ -1,0 +1,14 @@
+integer     := r"\d+"
+float       := r"\d+\.\d+"
+number      := float
+             | integer
+atom        := '-' number
+             | number
+factor      := '(' expression ')'
+             | atom
+term        := term '*' factor
+             | term '/' factor
+             | factor
+expression  := expression '+' term
+             | expression '-' term
+             | term

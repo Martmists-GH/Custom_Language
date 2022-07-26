@@ -3,6 +3,8 @@
 The first step is to identify all parts of your grammar. In part 1 I'll go over simple math with the four basic operators, as well as parentheses.
 By using a grammar parser library with left-recursion, we can use this to easily parse expressions left-to-right.
 
+The `src` folder contains the same code as shown below, in case you want to run it without having to copy everything.
+
 ### Writing the grammar
 
 The first things we should write down are the terminals, which are basically the smallest pieces of our language. For a calculator, this means numbers.
@@ -137,6 +139,8 @@ val float by regex("\\d+\\.\\d+") {
 }.memo()
 
 val number by first(
+    // Order is important! integer matches the start of float, so we need to put float first.
+    // This is also important in recursive rules.
     ::float,
     ::integer,
 ).memo()
@@ -177,6 +181,7 @@ val term: () -> AST by first(
     },
     ::factor,
 ).memoLeft()  // to deal with left-recursion, a memoLeft call is REQUIRED!
+// More information here: https://medium.com/@gvanrossum_83706/left-recursive-peg-grammars-65dab3c580e1
 
 val expression: () -> AST by first(
     firstBlock {
@@ -198,7 +203,8 @@ override val root: () -> AST
     get() = expression
 ```
 
-One downside of our grammar is that whitespace breaks everything, but we can fix that by removing it in the constructor:
+One downside of our grammar is that whitespace breaks everything, but our language doesn't need them anywhere, as there's no type for strings.
+This means we can solve the problem in the constructor:
 ```kotlin
 class CalculatorParser(input: String) : 
     GrammarParser<AST>(input.replace(Regex("\\s+"), "")) {
