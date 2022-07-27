@@ -50,7 +50,7 @@ class CalculatorParserTest {
     }
 
     @Test
-    fun `modifed order with parentheses`() {
+    fun `modified order with parentheses`() {
         val input = "1 * (2 + 3) / 4"
         val expected = BinOp(
             BinOp(

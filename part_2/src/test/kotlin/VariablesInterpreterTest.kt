@@ -3,7 +3,6 @@ import com.martmists.part2.VariablesInterpreter
 import com.martmists.part2.VariablesParser
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
-import java.io.StringWriter
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

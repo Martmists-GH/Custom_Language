@@ -140,7 +140,7 @@ val float by regex("\\d+\\.\\d+") {
 
 val number by first(
     // Order is important! integer matches the start of float, so we need to put float first.
-    // This is also important in recursive rules.
+    // This is also critical in recursive rules.
     ::float,
     ::integer,
 ).memo()

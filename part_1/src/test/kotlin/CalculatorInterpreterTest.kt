@@ -1,7 +1,5 @@
-import com.martmists.part1.BinOp
 import com.martmists.part1.CalculatorInterpreter
 import com.martmists.part1.CalculatorParser
-import com.martmists.part1.IntLiteral
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -30,7 +28,7 @@ class CalculatorInterpreterTest {
     }
 
     @Test
-    fun `modifed order with parentheses`() {
+    fun `modified order with parentheses`() {
         val input = "1 * (2 + 3) / 4"
         val expected = 1.25f
 

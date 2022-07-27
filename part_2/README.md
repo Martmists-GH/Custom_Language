@@ -33,7 +33,7 @@ statements   := (statement ';')*
 funcStmts    := (functionStmt ';')*
 ```
 
-Note that this grammar doesn require you to put a semicolon at the end of a function definition. While ideally this 
+Note that this grammar doesn't require you to put a semicolon at the end of a function definition. While ideally this 
 shouldn't be the case, I decided to keep it this way for now to keep it simple.  
 Next up, our AST dataclasses:
 
