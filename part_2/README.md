@@ -74,6 +74,19 @@ class InterpreterScope(parent: InterpreterScope?) {  // allow for a null parent 
         }
     }
 
+    fun addMissingFrom(other: InterpreterScope) {
+        for ((k, v) in other.values) {
+            if (k !in this) {
+                values[k] = v
+            }
+        }
+    }
+
+    operator fun contains(key: String): Boolean {
+        return values.containsKey(key)
+    }
+
+
     operator fun get(name: String): InterpreterValue {
         return values[name] ?: throw InterpreterException("Variable $name not found")
     }
@@ -214,7 +227,7 @@ class VariablesInterpreter {
             }
             is FloatLiteral -> InterpreterFloat(ast.value)
             is Function -> {
-                val func = InterpreterUserFunction(ast.args, ast.body)
+                val func = InterpreterUserFunction(ast.args, ast.body, currentScope)
                 currentScope[ast.name] = func
                 InterpreterNull
             }

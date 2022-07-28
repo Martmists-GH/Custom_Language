@@ -96,4 +96,26 @@ class VariablesInterpreterTest {
 
         assertEquals("8\n", output)
     }
+
+    @Test
+    fun `wrapped function`() {
+        val input = """
+            |function createAdder(a) {
+            |    function addImpl(b) {
+            |        return (a + b);
+            |    };
+            |    return addImpl;
+            |};
+            |addTwo = createAdder(2);
+            |println(addTwo(3));
+        """.trimMargin()
+        val interpreter = VariablesInterpreter()
+
+        val ast = VariablesParser(input).tryParse()
+        val output = withOutput {
+            interpreter.visit(ast)
+        }
+
+        assertEquals("5\n", output)
+    }
 }

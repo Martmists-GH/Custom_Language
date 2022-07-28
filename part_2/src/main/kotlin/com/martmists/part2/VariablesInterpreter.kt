@@ -14,9 +14,9 @@ class VariablesInterpreter {
         }
     }
 
-    fun scoped(block: () -> Unit) {
+    fun scoped(block: InterpreterScope.() -> Unit) {
         scopeStack.add(InterpreterScope(currentScope))
-        block()
+        currentScope.block()
         scopeStack.removeLast()
     }
 
@@ -43,7 +43,7 @@ class VariablesInterpreter {
             }
             is FloatLiteral -> InterpreterFloat(ast.value)
             is Function -> {
-                val func = InterpreterUserFunction(ast.args, ast.body)
+                val func = InterpreterUserFunction(ast.args, ast.body, currentScope)
                 currentScope[ast.name] = func
                 InterpreterNull
             }

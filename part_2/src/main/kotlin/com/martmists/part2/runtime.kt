@@ -162,7 +162,7 @@ abstract class InterpreterFunction : InterpreterValue {
     }
 }
 
-class InterpreterUserFunction(private val parameters: List<String>, private val statements: Statements) : InterpreterFunction() {
+class InterpreterUserFunction(private val parameters: List<String>, private val statements: Statements, private val scope: InterpreterScope) : InterpreterFunction() {
     override fun invoke(interpreter: VariablesInterpreter, args: List<InterpreterValue>): InterpreterValue {
         if (args.size != parameters.size) {
             throw InterpreterException("Wrong number of arguments! Expected ${parameters.size}, got ${args.size}")
@@ -171,6 +171,8 @@ class InterpreterUserFunction(private val parameters: List<String>, private val 
         var res: InterpreterValue = InterpreterNull
 
         interpreter.scoped {
+            addMissingFrom(scope)
+
             for ((param, arg) in parameters.zip(args)) {
                 interpreter.currentScope[param] = arg
             }
@@ -195,6 +197,18 @@ class InterpreterScope(parent: InterpreterScope?) {
         parent?.values?.let {
             values.putAll(it)
         }
+    }
+
+    fun addMissingFrom(other: InterpreterScope) {
+        for ((k, v) in other.values) {
+            if (k !in this) {
+                values[k] = v
+            }
+        }
+    }
+
+    operator fun contains(key: String): Boolean {
+        return values.containsKey(key)
     }
 
     operator fun get(name: String): InterpreterValue {
